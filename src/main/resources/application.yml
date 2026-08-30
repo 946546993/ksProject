@@ -1,0 +1,77 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: ai-assess
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai_assess?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 3s
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.company.aiassess.**.entity
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted      # 逻辑删除仅 t_question 使用
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
+  configuration:
+    map-underscore-to-camel-case: true
+
+# LLM 网关配置（敏感项走环境变量，勿提交真实值）
+llm:
+  route-strategy: primary_first        # primary_first / cost_first / quality_first
+  providers:
+    - id: internal
+      primary: true
+      base-url: ${LLM_INTERNAL_URL:}
+      api-key: ${LLM_INTERNAL_KEY:}
+      model: ${LLM_INTERNAL_MODEL:}
+      timeout-ms: 15000
+    - id: public_cloud
+      primary: false
+      base-url: ${LLM_PUBLIC_URL:}
+      api-key: ${LLM_PUBLIC_KEY:}
+      model: ${LLM_PUBLIC_MODEL:}
+      timeout-ms: 15000
+  circuit-breaker:
+    failure-rate-threshold: 50
+    sliding-window-size: 10
+    wait-open-ms: 60000
+
+# 难度回流定时（t_sys_config 可覆盖）
+reflow:
+  cron: "0 0 2 * * ?"
+  batch-size: 200
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.company.aiassess: debug

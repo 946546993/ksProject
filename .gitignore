@@ -47,6 +47,13 @@ bin/
 # ===================== VSCode =====================
 .vscode/
 
+# ===================== 前端 =====================
+node_modules/
+web/dist/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
 # ===================== 操作系统 =====================
 .DS_Store
 Thumbs.db
