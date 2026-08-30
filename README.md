@@ -43,6 +43,10 @@ mvn spring-boot:run
 cd web && npm install && npm run dev   # http://localhost:5173
 ```
 
+## 注意事项
+
+- 每次修改代码后，必须先完成验证（编译/构建通过），再进行 git 提交，并在提交信息中详细说明更改了什么，然后才能交付。
+
 ## 当前状态
 
 骨架阶段（对应 SDD 任务拆解的 T1 + T5）：工程结构、common 层、实体/Mapper、接口签名均已就位，
